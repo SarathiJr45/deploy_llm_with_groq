@@ -4,7 +4,7 @@ import requests
 st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
 st.title("🤖 Groq Chatbot")
 
-# Initialize chat history
+# Initialize message history
 if "messages" not in st.session_state:
     st.session_state.messages = [
         {"role": "assistant", "content": "Hi! I'm your Groq-powered chatbot. How can I help you today?"}
@@ -12,29 +12,25 @@ if "messages" not in st.session_state:
 
 # Display chat messages
 for msg in st.session_state.messages:
-    if msg["role"] == "user":
-        st.markdown(f"**You:** {msg['content']}")
-    else:
-        st.markdown(f"**Assistant:** {msg['content']}")
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
 
-# Chat input
-with st.form(key="chat_form", clear_on_submit=True):
-    user_input = st.text_input("You:", key="user_input", placeholder="Type your message here...")
-    submit = st.form_submit_button("Send")
+user_input = st.chat_input("Type your message...")
 
-if submit and user_input:
-    # Add user message to history
+if user_input:
+    # Show user message
+    st.chat_message("user").markdown(user_input)
     st.session_state.messages.append({"role": "user", "content": user_input})
 
-    # Call the backend
     try:
         response = requests.post(
             "https://deploy-llm-with-groq.onrender.com/chat",
             json={"message": user_input}
         )
         reply = response.json().get("response", "No response received.")
-    except Exception as e:
+    except Exception:
         reply = "⚠️ Error contacting backend."
 
-    # Add assistant reply to history
+    # Show assistant response
+    st.chat_message("assistant").markdown(reply)
     st.session_state.messages.append({"role": "assistant", "content": reply})
