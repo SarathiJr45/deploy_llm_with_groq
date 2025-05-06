@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-st.title("🚀 Groq Chatbot")
+st.title("Groq Chatbot")
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
@@ -12,7 +12,7 @@ if user_input:
     st.session_state["messages"].append({"role": "user", "content": user_input})
 
     response = requests.post(
-        "http://localhost:8000/chat",  # Replace with your deployed FastAPI endpoint
+        "http://0.0.0.0:10000/chat",  
         json={"message": user_input}
     )
 
