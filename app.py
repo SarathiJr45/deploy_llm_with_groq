@@ -12,7 +12,7 @@ if user_input:
     st.session_state["messages"].append({"role": "user", "content": user_input})
 
     response = requests.post(
-        "http://0.0.0.0:10000/chat",  
+        "https://deploy-llm-with-groq.onrender.com",  
         json={"message": user_input}
     )
 
