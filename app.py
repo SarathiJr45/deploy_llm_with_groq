@@ -1,23 +1,40 @@
 import streamlit as st
 import requests
 
-st.title("Groq Chatbot")
+st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
+st.title("🤖 Groq Chatbot")
 
+# Initialize chat history
 if "messages" not in st.session_state:
-    st.session_state["messages"] = []
+    st.session_state.messages = [
+        {"role": "assistant", "content": "Hi! I'm your Groq-powered chatbot. How can I help you today?"}
+    ]
 
-user_input = st.text_input("You:", key="user_input")
+# Display chat messages
+for msg in st.session_state.messages:
+    if msg["role"] == "user":
+        st.markdown(f"**You:** {msg['content']}")
+    else:
+        st.markdown(f"**Assistant:** {msg['content']}")
 
-if user_input:
-    st.session_state["messages"].append({"role": "user", "content": user_input})
+# Chat input
+with st.form(key="chat_form", clear_on_submit=True):
+    user_input = st.text_input("You:", key="user_input", placeholder="Type your message here...")
+    submit = st.form_submit_button("Send")
 
-    response = requests.post(
-        "https://deploy-llm-with-groq.onrender.com/chat",  
-        json={"message": user_input}
-    )
+if submit and user_input:
+    # Add user message to history
+    st.session_state.messages.append({"role": "user", "content": user_input})
 
-    reply = response.json()["response"]
-    st.session_state["messages"].append({"role": "assistant", "content": reply})
+    # Call the backend
+    try:
+        response = requests.post(
+            "https://deploy-llm-with-groq.onrender.com/chat",
+            json={"message": user_input}
+        )
+        reply = response.json().get("response", "No response received.")
+    except Exception as e:
+        reply = "⚠️ Error contacting backend."
 
-for msg in st.session_state["messages"]:
-    st.markdown(f"**{msg['role'].capitalize()}:** {msg['content']}")
+    # Add assistant reply to history
+    st.session_state.messages.append({"role": "assistant", "content": reply})
