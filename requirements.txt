@@ -1,5 +1,10 @@
 fastapi
-requests
 uvicorn
+python-docx
+pytesseract
+Pillow
+python-multipart
+requests
 python-dotenv
+pymupdf   
 streamlit
