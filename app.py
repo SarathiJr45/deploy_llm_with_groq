@@ -19,7 +19,7 @@ uploaded_file = st.file_uploader("Upload PDF, DOCX, TXT, or Image", type=["pdf",
 if uploaded_file:
     files = {"file": (uploaded_file.name, uploaded_file.getvalue(), uploaded_file.type)}
     try:
-        res = requests.post("http://localhost:8000/upload", files=files)
+        res = requests.post("https://deploy-llm-with-groq.onrender.com/upload", files=files)
         extracted = res.json().get("response", "")
         st.session_state.messages.append({"role": "user", "content": f"[Uploaded file: {uploaded_file.name}]"})
         st.session_state.messages.append({"role": "assistant", "content": f"Here's what I found in the document:\n\n{extracted}"})
@@ -34,7 +34,7 @@ if user_input:
 
     try:
         response = requests.post(
-            "http://localhost:8000/chat",
+            "https://deploy-llm-with-groq.onrender.com/chat",
             json={"message": user_input}
         )
         reply = response.json().get("response", "No response received.")
